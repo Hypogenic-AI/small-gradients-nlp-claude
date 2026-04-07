@@ -1,0 +1,20 @@
+\section{Introduction}
+\label{sec:intro}
+
+Training language models on their own outputs is becoming standard practice. Synthetic data augments scarce human annotations, bootstraps instruction-following ability, and scales supervision beyond what human labelers can provide. Yet two stubborn problems persist: synthetic data is less sample-efficient than human data, and recursive training on synthetic data causes \emph{model collapse}---a progressive narrowing of the learned distribution that degrades generation quality over successive generations~\citep{shumailov2023curse}.
+
+Why does this happen? Prior work has documented the phenomenon from the data-distribution side: synthetic text truncates the tails of the token frequency distribution~\citep{dohmatob2024tale}, lacks the diversity of human-authored text~\citep{kazdan2024bad}, and converges toward a narrow mode of the generator's distribution~\citep{wang2024theoretical}. \citet{shumailov2023curse} noted in passing that model-generated data produces ``very small gradients,'' and \citet{wu2025mitigating} showed that weight update norms are roughly $3\times$ smaller when training on self-generated text. But no prior work has systematically studied the \emph{per-step gradient dynamics}---both magnitude and direction---to build a mechanistic account of how low-perplexity data leads to collapse.
+
+{\bf Our main question is:} does synthetic data produce not just smaller gradients, but gradients concentrated in fewer directions? If so, this would provide a direct optimization-level mechanism for collapse: the model receives strong reinforcement along already-dominant directions while distributional tails---which would provide gradient signal in orthogonal directions---go unrepresented.
+
+We test this hypothesis through four controlled experiments using GPT-2 Small (124M parameters) fine-tuned on \wikitext. We generate matched synthetic data by having the same model complete prefixes from the training set, then compare gradient dynamics across conditions. Our key finding is striking: synthetic data gradients are concentrated in just 1--2 principal components, compared to 51+ for human data, with subspace overlap as low as 0.13. This directional collapse is far more dramatic than the 15\% reduction in gradient norms, and we argue it is the primary mechanism through which synthetic data starves learning.
+
+Our contributions are:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item We provide the first systematic empirical study of per-step gradient dynamics---both magnitude and direction---when fine-tuning on synthetic versus human data.
+    \item We identify \emph{gradient directional collapse} as the key mechanism: synthetic data concentrates gradient signal into 1--2 dimensions versus 51+ for human data, with very low subspace overlap (0.13--0.32).
+    \item We connect gradient-level observations to practical outcomes, showing that synthetic data requires $1.4$--$1.8\times$ more samples to match human data performance, with the gap widening at smaller data scales.
+    \item We unify prior observations---tail truncation, small weight updates, reduced diversity---into a single gradient-level mechanistic narrative that explains both reduced sample efficiency and model collapse.
+\end{itemize}
+
+The rest of this paper is organized as follows. \Secref{sec:related} reviews related work on model collapse and synthetic data quality. \Secref{sec:method} describes our experimental methodology. \Secref{sec:results} presents results across all four experiments. \Secref{sec:discussion} discusses implications, limitations, and future directions. \Secref{sec:conclusion} concludes.

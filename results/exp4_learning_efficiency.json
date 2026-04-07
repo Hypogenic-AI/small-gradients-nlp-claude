@@ -1,0 +1,54 @@
+{
+  "human": {
+    "0.1": {
+      "n_sequences": 158,
+      "n_steps": 200,
+      "val_ppl_mean": 80.69743311320636,
+      "val_ppl_median": 70.57401275634766
+    },
+    "0.25": {
+      "n_sequences": 395,
+      "n_steps": 200,
+      "val_ppl_mean": 40.663561435455975,
+      "val_ppl_median": 37.82035827636719
+    },
+    "0.5": {
+      "n_sequences": 790,
+      "n_steps": 200,
+      "val_ppl_mean": 33.384109402379245,
+      "val_ppl_median": 31.645614624023438
+    },
+    "1.0": {
+      "n_sequences": 1581,
+      "n_steps": 200,
+      "val_ppl_mean": 30.77103411221335,
+      "val_ppl_median": 28.631135940551758
+    }
+  },
+  "synthetic": {
+    "0.1": {
+      "n_sequences": 158,
+      "n_steps": 200,
+      "val_ppl_mean": 142.82268578279104,
+      "val_ppl_median": 127.53752136230469
+    },
+    "0.25": {
+      "n_sequences": 395,
+      "n_steps": 200,
+      "val_ppl_mean": 64.07650468704549,
+      "val_ppl_median": 58.400062561035156
+    },
+    "0.5": {
+      "n_sequences": 790,
+      "n_steps": 200,
+      "val_ppl_mean": 48.59467352197525,
+      "val_ppl_median": 45.517433166503906
+    },
+    "1.0": {
+      "n_sequences": 1581,
+      "n_steps": 200,
+      "val_ppl_mean": 43.05158590763173,
+      "val_ppl_median": 39.89612579345703
+    }
+  }
+}

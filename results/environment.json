@@ -1,0 +1,10 @@
+{
+  "python": "3.12.8 (main, Dec 19 2024, 14:33:20) [Clang 18.1.8 ]",
+  "torch": "2.4.1+cu121",
+  "cuda_available": true,
+  "device": "cuda:0",
+  "seed": 42,
+  "timestamp": "2026-04-07T08:16:25.925706",
+  "gpu": "NVIDIA RTX A6000",
+  "gpu_memory_gb": 50.936283136
+}

@@ -1,0 +1,8 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We present the first systematic empirical study of gradient dynamics when fine-tuning language models on synthetic versus human data. Our key finding is \emph{gradient directional collapse}: synthetic data concentrates gradient signal into just 1--2 principal components, compared to 51+ for human data, with subspace overlap as low as 0.13. This directional collapse is far more dramatic than the 15\% reduction in gradient norms and provides an optimization-level mechanism for model collapse---the model reinforces already-dominant patterns while distributional tails receive no gradient signal.
+
+These results unify prior observations about synthetic data---tail truncation, small weight updates, reduced diversity---into a single mechanistic narrative grounded in gradient geometry. The practical consequence is a $1.4$--$1.8\times$ reduction in sample efficiency, with the gap widening when data is scarce.
+
+Looking forward, three directions are most promising: (1) tracking gradient directionality across recursive generation cycles to directly observe the collapse feedback loop, (2) designing gradient-aware synthetic data curation that maximizes subspace coverage, and (3) testing whether gradient direction regularization can prevent collapse while retaining the scalability benefits of synthetic data.

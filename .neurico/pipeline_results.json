@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "stages": {
+    "resource_finder": {
+      "success": true,
+      "completion_marker": "/workspaces/small-gradients-nlp-claude/.resource_finder_complete",
+      "outputs": {
+        "literature_review": "/workspaces/small-gradients-nlp-claude/literature_review.md",
+        "resources_catalog": "/workspaces/small-gradients-nlp-claude/resources.md",
+        "papers_dir": "/workspaces/small-gradients-nlp-claude/papers",
+        "datasets_dir": "/workspaces/small-gradients-nlp-claude/datasets",
+        "code_dir": "/workspaces/small-gradients-nlp-claude/code"
+      },
+      "log_file": "/workspaces/small-gradients-nlp-claude/logs/resource_finder_claude.log",
+      "transcript_file": "/workspaces/small-gradients-nlp-claude/logs/resource_finder_claude_transcript.jsonl",
+      "elapsed_time": 1481.8752913475037
+    },
+    "experiment_runner": {
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 5669.343257427216,
+      "log_file": "/workspaces/small-gradients-nlp-claude/logs/execution_claude.log",
+      "transcript_file": "/workspaces/small-gradients-nlp-claude/logs/execution_claude_transcript.jsonl"
+    }
+  },
+  "work_dir": "/workspaces/small-gradients-nlp-claude"
+}

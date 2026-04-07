@@ -1,0 +1,51 @@
+\section{Methodology}
+\label{sec:method}
+
+We design four experiments that progressively build a mechanistic account: from the data-level premise (Experiment~1) through gradient magnitude (Experiment~2) and direction (Experiment~3) to practical consequences (Experiment~4). All experiments use the same model, data, and random seed for reproducibility.
+
+\subsection{Model and Data}
+\label{sec:model_data}
+
+\para{Base model.} We use \gptsmall (124M parameters) with pretrained weights from HuggingFace. This model is small enough for tractable full-gradient computation while large enough to exhibit meaningful language modeling behavior.
+
+\para{Human data.} We use the \wikitext training split, tokenized into 1{,}581 sequences of 256 tokens each.
+
+\para{Synthetic data.} We generate matched synthetic sequences by having \gptsmall complete 32-token prefixes drawn from the \wikitext training set, using nucleus sampling (top-$p = 0.95$, temperature $= 1.0$). This produces 1{,}581 synthetic sequences of the same length as the human data. Crucially, the generator is the same model being fine-tuned, which is the setting most relevant to model collapse: the model trains on data from its own distribution.
+
+\para{Validation data.} We use the \wikitext validation split (141 sequences) to evaluate learning efficiency in Experiment~4.
+
+\subsection{Experiment 1: Perplexity Distributions}
+\label{sec:exp1}
+
+We compute per-sequence perplexity for both human and synthetic data using the base (unfine-tuned) \gptsmall model. This establishes the premise that the model finds its own output more predictable than human text. We compare distributions using the Mann-Whitney $U$ test.
+
+\subsection{Experiment 2: Gradient Norm Comparison}
+\label{sec:exp2}
+
+We fine-tune \gptsmall from the same pretrained checkpoint on human data for 200 steps, recording the $L^2$ norm of the full gradient vector at each step. We then repeat the procedure identically on synthetic data. Hyperparameters: batch size 16, learning rate $5 \times 10^{-5}$, AdamW optimizer. We compare gradient norm distributions using the Mann-Whitney $U$ test and report Cohen's $d$ for effect size.
+
+\subsection{Experiment 3: Gradient Direction Analysis}
+\label{sec:exp3}
+
+This experiment tests our central hypothesis: that synthetic data produces gradients concentrated in a lower-dimensional subspace.
+
+\para{Gradient collection.} We collect 100 gradient vectors per condition (human vs.\ synthetic), each computed from a fresh forward-backward pass on a single batch starting from the base model checkpoint. We analyze four weight matrices spanning early, middle, and late layers: \texttt{transformer.h.\{0,5,11\}.attn.c\_attn.weight} and \texttt{transformer.h.11.attn.c\_proj.weight}.
+
+\para{Dimensionality reduction.} For large weight matrices, we apply random projection to 5{,}000 dimensions before PCA. Random projection preserves pairwise distances approximately (Johnson-Lindenstrauss lemma), making PCA on the projected gradients a faithful summary of the original subspace structure.
+
+\para{Metrics.} We measure three quantities:
+\begin{enumerate}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item \textbf{Effective rank}: the number of PCA components needed to explain 90\% of variance. Lower values indicate a more concentrated gradient subspace.
+    \item \textbf{Internal cosine similarity}: the average pairwise cosine similarity among gradient vectors within each condition. Higher values indicate more directionally consistent gradients.
+    \item \textbf{Subspace overlap}: the cosine similarity between the top-$k$ principal components of human and synthetic gradient subspaces. Low overlap indicates that the two conditions drive learning in different parameter directions.
+\end{enumerate}
+
+\subsection{Experiment 4: Learning Efficiency}
+\label{sec:exp4}
+
+We fine-tune fresh \gptsmall models on 10\%, 25\%, 50\%, and 100\% of each data type for 200 steps, measuring validation perplexity on held-out human \wikitext data. This tests the practical consequence of gradient attenuation: if synthetic data produces weaker and narrower gradient signals, more data should be needed to achieve equivalent learning.
+
+\subsection{Implementation Details}
+\label{sec:impl}
+
+All experiments run on a single NVIDIA RTX A6000 GPU (49 GB). We use PyTorch 2.4.1 with CUDA 12.1, Transformers 5.5.0, and Python 3.12.8. All random seeds are fixed to 42. Statistical tests use significance level $\alpha = 0.05$.

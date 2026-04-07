@@ -1,0 +1,54 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{A Mechanistic Narrative for Model Collapse}
+
+Our four experiments support a coherent mechanistic story linking low perplexity to model collapse through gradient dynamics:
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt,topsep=2pt]
+    \item \textbf{LLMs generate low-entropy text} that closely matches their own distribution ($3\times$ lower median perplexity; \secref{sec:results_exp1}).
+    \item \textbf{Low-perplexity data produces smaller gradients}, because the model's predictions are already close to the targets (15\% smaller $L^2$ norms; \secref{sec:results_exp2}).
+    \item \textbf{The gradient signal is directionally concentrated} in 1--2 dimensions versus 51+ for human data (\secref{sec:results_exp3}). This is the key mechanism: the model receives strong reinforcement along already-dominant directions while rare or diverse patterns receive no gradient signal.
+    \item \textbf{The practical consequence is reduced sample efficiency} ($1.4$--$1.8\times$ more data needed; \secref{sec:results_exp4}) and, over recursive generations, progressive narrowing of the learned distribution---\ie model collapse.
+\end{enumerate}
+
+The directional collapse finding (point 3) is the novel and most important contribution. Prior work established that synthetic gradients are smaller~\citep{wu2025mitigating} and that synthetic data truncates distributional tails~\citep{dohmatob2024tale}. Our analysis bridges these observations: tail truncation in data space manifests as gradient signal loss in tail-representing parameter directions. The model is not merely learning slowly---it is learning in the wrong subspace.
+
+\subsection{Connection to Prior Work}
+
+Our gradient direction findings provide the optimization-level explanation for several phenomena observed in prior work:
+
+\para{Tail truncation.} \citet{dohmatob2024tale} showed that synthetic data distributions lose their tails through sampling truncation. Our gradient analysis shows this manifests as gradient signal loss in directions that would otherwise encode tail information. The effective rank of 1--2 for synthetic gradients versus 51+ for human gradients quantifies this loss at the optimization level.
+
+\para{Weight update magnitude.} \citet{wu2025mitigating} showed that weight update norms are ${\sim}3\times$ smaller for self-generated data (Llama 3 8B). Our per-step gradient analysis with \gptsmall finds a more modest $1.15\times$ ratio in gradient norms, suggesting that the $3\times$ weight update difference accumulates over many steps and may be amplified by optimizer dynamics (momentum, adaptive learning rates). The directional collapse we identify likely contributes to this amplification: when gradients point in fewer directions, optimizer accumulators in unused directions decay, further suppressing updates.
+
+\para{Inevitability of collapse.} \citet{wang2024theoretical} proved that autoregressive models must collapse when trained recursively. Our results suggest a gradient-level mechanism for this inevitability: each generation narrows the gradient subspace, which narrows the learned distribution, which narrows the next generation's gradient subspace further---a positive feedback loop.
+
+\subsection{The Middle Layer Exception}
+
+Layer \texttt{h.5} showed a qualitatively different pattern: synthetic gradients used 30 PCA components (vs.\ 1--2 in other layers) and human gradients had unusually high internal cosine similarity (0.812 vs.\ 0.61--0.65 in other layers). We speculate that middle transformer layers process more structural and syntactic features---sentence boundaries, agreement patterns, common phrase structures---where human and synthetic text are more similar. Early layers encode low-level token statistics and late layers encode higher-order distributional properties; both are domains where synthetic text's homogeneity is most apparent.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+\para{Single model and dataset.} We use only \gptsmall on \wikitext. Larger models may distribute gradient signal differently, and the relative magnitude of directional collapse could vary with model scale. Replication with 7B+ parameter models is an important next step.
+
+\para{Generation strategy.} We use nucleus sampling ($p = 0.95$) from the same model being fine-tuned. Different generation strategies (beam search, different temperatures, or generation from a different model) may produce different gradient profiles. The self-generation setting is most relevant to model collapse, but cross-model distillation scenarios warrant separate study.
+
+\para{Random projection.} Large weight matrices required random projection to 5{,}000 dimensions before PCA. While random projection preserves distances approximately (Johnson-Lindenstrauss), it may miss fine-grained structural differences in gradient geometry.
+
+\para{Short training horizon.} Our 200-step fine-tuning experiments capture single-generation gradient dynamics. Model collapse manifests over recursive generations; we do not directly observe the feedback loop where narrowed gradients produce narrower data which produces even narrower gradients. This recursive dynamic is an important direction for future work.
+
+\para{Modest norm effect.} The 15\% gradient norm reduction, while highly significant statistically, is modest in absolute terms. We argue that the directional analysis (Experiment~3) is the stronger explanatory mechanism, and the norm effect compounds over extended training.
+
+\para{Correlational design.} We correlate perplexity with gradient properties but do not perform causal interventions (\eg controlling perplexity while varying content). Future work using perplexity-matched data via rejection sampling could isolate directional effects from magnitude effects.
+
+\subsection{Implications for Practice}
+
+Our findings suggest several practical directions:
+
+\para{Gradient-aware data curation.} Rather than selecting synthetic data based on surface statistics (diversity, perplexity thresholds), practitioners could select batches that maximize gradient subspace coverage. A batch whose gradients span many directions provides more learning signal than one whose gradients are concentrated in a single direction, even if both have the same aggregate norm.
+
+\para{Collapse detection.} Gradient subspace dimensionality could serve as a real-time signal to detect incipient collapse during training. A sudden drop in the effective rank of batch gradients would indicate that the training data has become too predictable, even before perplexity metrics on held-out data show degradation.
+
+\para{Regularization.} Training with gradient direction regularization---penalizing low effective rank in batch gradients---could potentially prevent collapse while retaining synthetic data's other benefits (cost, scale, controllability).

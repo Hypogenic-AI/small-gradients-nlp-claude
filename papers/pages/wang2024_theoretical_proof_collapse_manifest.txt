@@ -1,0 +1,12 @@
+PDF: papers/wang2024_theoretical_proof_collapse.pdf
+Total pages: 20
+Pages per chunk: 3
+
+Chunks:
+  wang2024_theoretical_proof_collapse_chunk_001.pdf: pages 1-3
+  wang2024_theoretical_proof_collapse_chunk_002.pdf: pages 4-6
+  wang2024_theoretical_proof_collapse_chunk_003.pdf: pages 7-9
+  wang2024_theoretical_proof_collapse_chunk_004.pdf: pages 10-12
+  wang2024_theoretical_proof_collapse_chunk_005.pdf: pages 13-15
+  wang2024_theoretical_proof_collapse_chunk_006.pdf: pages 16-18
+  wang2024_theoretical_proof_collapse_chunk_007.pdf: pages 19-20

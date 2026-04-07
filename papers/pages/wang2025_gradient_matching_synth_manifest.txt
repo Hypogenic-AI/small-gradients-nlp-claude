@@ -1,0 +1,11 @@
+PDF: papers/wang2025_gradient_matching_synth.pdf
+Total pages: 18
+Pages per chunk: 3
+
+Chunks:
+  wang2025_gradient_matching_synth_chunk_001.pdf: pages 1-3
+  wang2025_gradient_matching_synth_chunk_002.pdf: pages 4-6
+  wang2025_gradient_matching_synth_chunk_003.pdf: pages 7-9
+  wang2025_gradient_matching_synth_chunk_004.pdf: pages 10-12
+  wang2025_gradient_matching_synth_chunk_005.pdf: pages 13-15
+  wang2025_gradient_matching_synth_chunk_006.pdf: pages 16-18
